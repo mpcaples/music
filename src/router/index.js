@@ -3,6 +3,8 @@ import Home from '@/views/HomeView.vue'
 import About from '@/views/AboutView.vue'
 import Manage from '@/views/ManageView.vue'
 import Song from '@/views/SongView.vue'
+import PlaylistItem from '@/components/PlayListItem.vue'
+import Playlists from '@/views/PlaylistsView.vue'
 import useUserStore from '@/stores/user'
 
 const routes = [
@@ -34,6 +36,16 @@ const routes = [
     redirect: {
       name: 'manage'
     }
+  },
+  {
+    name: 'playlists',
+    path: '/playlists',
+    component: Playlists
+  },
+  {
+    name: 'playlist',
+    path: '/playlist/:id',
+    component: PlaylistItem
   },
   {
     name: 'song',

@@ -7,7 +7,7 @@
         class="text-white font-bold uppercase text-2xl mr-4"
         :to="{ name: 'home' }"
         exact-active-class="no-active"
-        >Music</router-link
+        >{{ $t('header.music') }}</router-link
       >
 
       <div class="flex flex-grow items-center">
@@ -15,21 +15,40 @@
         <ul class="flex flex-row mt-1">
           <!-- Navigation Links -->
           <li>
-            <router-link class="px-2 text-white" :to="{ name: 'about' }">About</router-link>
+            <router-link class="px-2 text-white" :to="{ name: 'about' }">{{
+              $t('header.about')
+            }}</router-link>
           </li>
           <li v-if="!userStore.userLoggedIn">
             <a class="px-2 text-white" href="#" @click.prevent="toggleAuthModal"
-              >Login / Register</a
+              >{{ $t('header.login') }} / {{ $t('header.register') }}</a
             >
           </li>
           <template v-else>
             <li>
-              <router-link class="px-2 text-white" :to="{ name: 'manage' }">Manage</router-link>
+              <router-link class="px-2 text-white" :to="{ name: 'manage' }">{{
+                $t('header.manage')
+              }}</router-link>
             </li>
             <li>
-              <a class="px-2 text-white" href="#" @click.prevent="signOut">Logout</a>
+              <router-link class="px-2 text-white" href="#" :to="{ name: 'playlists' }">
+                {{ $t('header.playlists') }}
+              </router-link>
+            </li>
+            <li>
+              <a class="px-2 text-white" href="#" @click.prevent="signOut">{{
+                $t('header.logout')
+              }}</a>
             </li>
           </template>
+        </ul>
+        <ul class="ml-auto">
+          <li>
+            <select name="languages" id="language-selection" @change="changeLocale">
+              <option value="en">English</option>
+              <option value="fr">French</option>
+            </select>
+          </li>
         </ul>
       </div>
     </nav>
@@ -44,7 +63,10 @@ import useUserStore from '@/stores/user'
 export default {
   name: 'AppHeader',
   computed: {
-    ...mapStores(useModalStore, useUserStore)
+    ...mapStores(useModalStore, useUserStore),
+    currentLocale() {
+      return this.$i18n.locale === 'fr' ? 'French' : 'English'
+    }
   },
   methods: {
     toggleAuthModal() {
@@ -56,6 +78,9 @@ export default {
       if (this.$route.meta.requiresAuth) {
         this.$router.push({ name: 'home' })
       }
+    },
+    changeLocale() {
+      this.$i18n.locale = this.$i18n.locale === 'fr' ? 'en' : 'fr'
     }
   }
 }

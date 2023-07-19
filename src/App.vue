@@ -1,15 +1,16 @@
 <template>
-  <app-header />
-
-  <router-view v-slot="{ Component }">
-    <transition name="fade" mode="out-in">
-      <component :is="Component"> </component>
-    </transition>
-  </router-view>
-
-  <app-player />
-
-  <app-auth />
+  <div>
+    <app-header />
+    <router-view v-slot="{ Component, route }">
+      <transition name="fade" mode="out-in">
+        <div :key="route.name">
+          <component :is="Component"></component>
+        </div>
+      </transition>
+    </router-view>
+    <app-player />
+    <app-auth />
+  </div>
 </template>
 
 <script>

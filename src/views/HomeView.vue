@@ -8,7 +8,7 @@
       ></div>
       <div class="container mx-auto">
         <div class="text-white main-header-content">
-          <h1 class="font-bold text-5xl mb-5">Listen to Great Music!</h1>
+          <h1 class="font-bold text-5xl mb-5">{{ $t('home.listen') }}</h1>
           <p class="w-full md:w-8/12 mx-auto">
             Lorem ipsum dolor sit amet, consectetur adipiscing elit. Phasellus et dolor mollis,
             congue augue non, venenatis elit. Nunc justo eros, suscipit ac aliquet imperdiet,
@@ -26,10 +26,20 @@
     <!-- Main Content -->
     <section class="container mx-auto">
       <div class="bg-white rounded border border-gray-200 relative flex flex-col">
-        <div class="px-6 pt-6 pb-5 font-bold border-b border-gray-200">
-          <span class="card-title">Songs</span>
+        <div
+          class="px-6 pt-6 pb-5 font-bold border-b border-gray-200"
+          v-icon-secondary="{ icon: 'headphones-alt', right: true }"
+        >
+          <select v-model="selectedPlaylist">
+            <option
+              class="card-title"
+              v-for="playlist in playlists"
+              :key="playlist.playlistID"
+              :value="playlist.playlistID"
+              :label="playlist.name"
+            ></option>
+          </select>
           <!-- Icon -->
-          <i class="fa fa-headphones-alt float-right text-green-400 text-xl"></i>
         </div>
         <!-- Playlist -->
         <ol id="playlist">
@@ -42,16 +52,23 @@
 </template>
 
 <script>
-import { songsCollection } from '@/includes/firebase'
+import { playlistsCollection, songsCollection } from '@/includes/firebase'
 import AppSongItem from '@/components/SongItem.vue'
+import IconSecondary from '@/directives/icon-secondary'
+
 export default {
   name: 'HomeView',
   components: {
     AppSongItem
   },
+  directives: {
+    'icon-secondary': IconSecondary
+  },
   data() {
     return {
       songs: [],
+      playlists: [],
+      selectedPlaylist: '',
       maxPerPage: 25,
       pendingRequest: false
     }
@@ -60,6 +77,9 @@ export default {
     this.getSongs()
 
     window.addEventListener('scroll', this.handleScroll)
+  },
+  async mounted() {
+    this.getPlaylists()
   },
   beforeUnmount() {
     window.removeEventListener('scroll', this.handleScroll)
@@ -73,6 +93,13 @@ export default {
       if (bottomOfWindow) {
         this.getSongs()
       }
+    },
+    async getPlaylists() {
+      const playlistsSnapshot = await playlistsCollection.get()
+
+      playlistsSnapshot.forEach((doc) => {
+        this.playlists.push({ ...doc.data(), playlistID: doc.id })
+      })
     },
     async getSongs() {
       if (this.pendingRequest) {

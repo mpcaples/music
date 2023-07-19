@@ -1,0 +1,14 @@
+{
+  "header": {
+    "music": "Musique",
+    "about": "L'information",
+    "login": "Login",
+    "register": "Enregistrer",
+    "manage": "Gérer",
+    "logout": "Déconnecter",
+    "playlists": "Playlists"
+  },
+  "home": {
+    "listen": "Écoutez de la bonne musique!"
+  }
+}
