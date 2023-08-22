@@ -28,3 +28,4 @@ coverage
 *.sw?
 
 src/includes/firebase.js
+.vercel

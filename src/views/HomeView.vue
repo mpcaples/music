@@ -25,24 +25,30 @@
 
     <!-- Main Content -->
     <section class="container mx-auto">
+    
       <div class="bg-white rounded border border-gray-200 relative flex flex-col">
-        <div
-          class="px-6 pt-6 pb-5 font-bold border-b border-gray-200"
-          v-icon-secondary="{ icon: 'headphones-alt', right: true }"
-        >
-          <select v-model="selectedPlaylist">
-            <option
-              class="card-title"
-              v-for="playlist in playlists"
-              :key="playlist.playlistID"
-              :value="playlist.playlistID"
-              :label="playlist.name"
-            ></option>
-          </select>
-          <!-- Icon -->
+        <div class="flex-row px-6 pt-6 pb-6 font-bold border-b border-gray-200">
+          <label for="selectPlaylist" class="text-gray-600">Choose your playlist:</label>
+          <select v-model="selectedPlaylist" id="selectPlaylist" @change="getPlaylistSongs(selectedPlaylist)">
+              <option 
+                v-for="playlist in playlists"
+                :key="playlist.playlistID"
+                :value="playlist.playlistID"
+                :label="playlist.name"
+              ></option>
+            </select>
+          <span
+            class="flex-end"
+            v-icon-secondary="{ icon: 'headphones-alt', right: true }"
+          >
+            <!-- Icon -->
+          </span>
         </div>
         <!-- Playlist -->
-        <ol id="playlist">
+        <ol id="playlist" v-if="selectedPlaylist !== null">
+          <app-song-item v-for="song in playlistSongs" :key="song.docID" :song="song" />
+        </ol>
+        <ol id="playlist" v-if="selectedPlaylist === null">
           <app-song-item v-for="song in songs" :key="song.docID" :song="song" />
         </ol>
         <!-- .. end Playlist -->
@@ -52,7 +58,8 @@
 </template>
 
 <script>
-import { playlistsCollection, songsCollection } from '@/includes/firebase'
+import { songsCollection } from '@/includes/firebase'
+import { playlistsGet } from '@/includes/firebaseGet'
 import AppSongItem from '@/components/SongItem.vue'
 import IconSecondary from '@/directives/icon-secondary'
 
@@ -68,7 +75,8 @@ export default {
     return {
       songs: [],
       playlists: [],
-      selectedPlaylist: '',
+      playlistSongs: [],
+      selectedPlaylist: null,
       maxPerPage: 25,
       pendingRequest: false
     }
@@ -79,7 +87,7 @@ export default {
     window.addEventListener('scroll', this.handleScroll)
   },
   async mounted() {
-    this.getPlaylists()
+    await this.displayPlaylists()
   },
   beforeUnmount() {
     window.removeEventListener('scroll', this.handleScroll)
@@ -94,11 +102,13 @@ export default {
         this.getSongs()
       }
     },
-    async getPlaylists() {
-      const playlistsSnapshot = await playlistsCollection.get()
-
-      playlistsSnapshot.forEach((doc) => {
-        this.playlists.push({ ...doc.data(), playlistID: doc.id })
+    async displayPlaylists() {
+        this.playlists = await playlistsGet()
+    },
+    getPlaylistSongs(selectedPlaylist) {
+      const playlist = this.playlists.find((playlist) => playlist.playlistID === selectedPlaylist)
+      this.playlistSongs = this.songs.filter((song) => {
+        return playlist.songs.includes(song.docID)
       })
     },
     async getSongs() {

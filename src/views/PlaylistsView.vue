@@ -9,9 +9,12 @@
         :name="playlist.name"
         :songs="playlist.songs"
       >
+      <div class="flex justify-between">
         <router-link :to="{ name: 'playlist', params: { id: playlist.playlistID } }">
           {{ playlist.name }}
         </router-link>
+        <button @click.prevent="onDeletePlaylist(playlist.playlistID)">Delete Playlist</button>
+      </div>
       </li>
     </ul>
     <button
@@ -97,6 +100,13 @@ export default {
       this.playlists = []
       this.getPlaylists()
       this.showForm = false
+    }, 
+    async onDeletePlaylist(playlistID) {
+      const playlistIndex = this.playlists.findIndex((playlist) => playlist.playlistID === playlistID)
+      this.playlists.splice(playlistIndex, 1)
+    
+      await playlistsCollection.doc(playlistID).delete()
+      
     }
   },
   created() {

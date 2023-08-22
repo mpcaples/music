@@ -13,6 +13,6 @@ export default defineStore('playlists', {
         this.playlists.push({ ...doc.data(), playlistID: doc.id })
       })
     },
-    addPlaylist() {}
+    addPlaylist() {}, 
   }
 })
