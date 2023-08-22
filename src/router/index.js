@@ -5,7 +5,7 @@ const Home = () => import("@/views/HomeView.vue")
 const About = () => import("@/views/AboutView.vue")
 const Manage = () => import("@/views/ManageView.vue")
 const Song = () => import("@/views/SongView.vue")
-const PlaylistItem = () => import("@/views/PlayListItem.vue")
+const PlaylistItem = () => import("@/views/PlaylistItem.vue")
 const Playlists = () => import("@/views/PlaylistsView.vue")
 
 const routes = [
